@@ -5,15 +5,7 @@ date:   2025-07-10 16:40:34 +0200
 categories: web-writeup
 ---
 
-## 1 – Scenario
-
-| Componente | Estratto rilevante |
-|------------|-------------------|
-| `index.php` | ```php<br>show_source(__FILE__);<br>unserialize($_GET['data']);``` |
-| **Bot** | visit URL `http://challenge/…`, set cookie `flag=<secret>` |
-| **Goal** | execute js in `http://challenge/` for read the cookie |
-
-## 2 - Reconnaissance
+## 1 - Reconnaissance
 
 The challenge provided two services:
    * A PHP 8 container hosting a minimalistic PHP page
@@ -87,7 +79,7 @@ The challenge provided two services:
 
    But these two seemingly innocent lines of code force us to dig deeper — it’s not as straightforward as it first appears. Exploiting this deserialization requires a bit of creativity and a closer look at how the application handles serialized input.
 
-## 3 - Analysis
+## 2 - Analysis
 
    One possible workaround could have been to skip the PHP layer entirely and send a request directly to the bot’s webhook, hoping to exfiltrate the cookie.
    However, this approach quickly runs into two major blockers:
@@ -111,7 +103,7 @@ The challenge provided two services:
 
    Maybe I could inject a payload into a place where it causes an error during unserialize, and somehow leverage that error path to trigger an XSS.
 
-## 4 - Exploitation
+## 3 - Exploitation
 
    I started experimenting with different payloads that could break the unserialize process.
    One idea was to leverage built-in PHP classes like Exception, which are known to be deserializable, and inject a crafted payload inside them.
@@ -164,7 +156,7 @@ The challenge provided two services:
 
    Time to build that class and grab the flag!
 
-## 5 – Making a payload
+## 4 – Making a payload
 
 ```php
 $js = '</b>&lt;script&gt;alert(1)&lt;/script&gt;<b';
